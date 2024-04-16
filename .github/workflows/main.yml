@@ -57,3 +57,4 @@ jobs:
           ' "$found_file" > temp.json && mv temp.json "$found_file"
 done
 
+jq: error (at /home/runner/work/aiid205223-sample-Boomi-CICD/aiid205223-sample-Boomi-CICD/JAN2024CE/QA/UpdateExtensions/32fsdfda-57f4-47c8-b861-bf60ee85621c.json:64): Cannot iterate over null (null)
