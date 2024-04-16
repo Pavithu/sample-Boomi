@@ -161,3 +161,6 @@ Error: Process completed with exit code 5.
               echo "File $file_path not found."
             fi
           done
+
+          GITHUB_Proview_URL=$(cat path_to_GITHUB_Proview_URL_file)
+GITHUB_SECRET=$(cat path_to_GITHUB_SECRET_file)
