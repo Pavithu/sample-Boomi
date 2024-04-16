@@ -133,3 +133,31 @@ Error: Process completed with exit code 5.
               echo "File $file_path not found."
             fi
           done
+
+
+
+
+ # Define the new values
+          GITHUB_Proview_URL="${{ env.MYGIT_VARIABLE_SAMPLE }}"
+          GITHUB_SECRET="${{ secrets.GIT_SECRET }}"
+
+          # Iterate over each found JSON file
+          for file_path in *.json; do
+            if [ -f "$file_path" ]; then
+              echo "Updating $file_path with new values."
+              # Update the JSON file with GitHub variables and secrets
+              jq --arg GITHUB_Proview_URL "$GITHUB_Proview_URL" --arg GITHUB_SECRET "$GITHUB_SECRET" '
+                if has("connections") and .connections | has("connection") then
+                  .connections.connection[] |= (
+                    if .field[].id == "url" then .field[].value = $GITHUB_Proview_URL else . end
+                  ) | (
+                    if .field[].id == "password" then .field[].value = $GITHUB_SECRET else . end
+                  )
+                else
+                  .
+                end
+              ' "$file_path" > temp.json && mv temp.json "$file_path"
+            else
+              echo "File $file_path not found."
+            fi
+          done
