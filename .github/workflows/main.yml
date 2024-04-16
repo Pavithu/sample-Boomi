@@ -99,3 +99,7 @@ Error: Process completed with exit code 5.
               echo "File $file_path not found."
             fi
           done
+
+Iterating over each found JSON file:
+Updating /home/runner/work/aiid205223-sample-Boomi-CICD/aiid205223-sample-Boomi-CICD/JAN2024CE/QA/UpdateExtensions/32fsdfda-57f4-47c8-b861-bf60ee85621c.json with new values.
+Error: Process completed with exit code 5.
