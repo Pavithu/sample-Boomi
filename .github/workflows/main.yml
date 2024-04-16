@@ -103,3 +103,33 @@ Error: Process completed with exit code 5.
 Iterating over each found JSON file:
 Updating /home/runner/work/aiid205223-sample-Boomi-CICD/aiid205223-sample-Boomi-CICD/JAN2024CE/QA/UpdateExtensions/32fsdfda-57f4-47c8-b861-bf60ee85621c.json with new values.
 Error: Process completed with exit code 5.
+
+  echo "Define the new values:"
+          GITHUB_Proview_URL="${{ env.MYGIT_VARIABLE_SAMPLE }}"
+          GITHUB_SECRET="${{ secrets.GIT_SECRET }}"
+
+          echo "Iterating over each found JSON file:"
+          for file_path in "${found_files[@]}"; do
+            if [ -f "$file_path" ]; then
+              echo "Updating $file_path with new values."
+              # Check if the .connections.connection array exists and is not empty
+              if jq -e '.connections.connection | length > 0' "$file_path" > /dev/null; then
+                # Update the JSON file with GitHub variables and secrets
+                jq --arg GITHUB_Proview_URL "$GITHUB_Proview_URL" --arg GITHUB_SECRET "$GITHUB_SECRET" '
+                  if has("connections") and .connections | has("connection") then
+                    .connections.connection[] |= (
+                      if .field[].id == "url" then .field[].value = $GITHUB_Proview_URL else . end
+                    ) | (
+                      if .field[].id == "password" then .field[].value = $GITHUB_SECRET else . end
+                    )
+                  else
+                    .
+                  end
+                ' "$file_path" > temp.json && mv temp.json "$file_path"
+              else
+                echo "No connections found in $file_path. Skipping update."
+              fi
+            else
+              echo "File $file_path not found."
+            fi
+          done
