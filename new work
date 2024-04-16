@@ -59,6 +59,9 @@ for found_file in "${found_files[@]}"; do
 done
 
 
+values=$(jq -r 'recurse | strings' 23423dfgd-57f4-47c8-b861-bf60ee85621c.json | grep '^\$')
+          echo $values
+
 define the new values:
 Iterate over each found JSON file:
 jq: error (at /home/runner/work/aiid205223-sample-Boomi-CICD/aiid205223-sample-Boomi-CICD/JAN2024CE/QA/UpdateExtensions/32fsdfda-57f4-47c8-b861-bf60ee85621c.json:64): boolean (true) has no length
