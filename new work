@@ -19,6 +19,41 @@ done
 
 
 
+
+
+
 jq: error (at /home/runner/work/aiid205223-sample-Boomi-CICD/aiid205223-sample-Boomi-CICD/JAN2024CE/QA/UpdateExtensions/32fsdfda-57f4-47c8-b861-bf60ee85621c.json:64): Cannot iterate over null (null)
 Updated /home/runner/work/aiid205223-sample-Boomi-CICD/aiid205223-sample-Boomi-CICD/JAN2024CE/QA/UpdateExtensions/32fsdfda-57f4-47c8-b861-bf60ee85621c.json with new values.
 
+
+
+echo "Iterate over each found JSON file:"
+for found_file in "${found_files[@]}"; do
+    # Check if the .connections object exists
+    if jq -e '.connections' "$found_file" > /dev/null; then
+        # Check if the .connections.connection array exists and is not null
+        if jq -e '.connections.connection | length > 0' "$found_file" > /dev/null; then
+            # Display the contents of the file before the update
+            echo "Contents of $found_file before update:"
+            cat "$found_file"
+
+            # Update the JSON file with GitHub variables and secrets
+            jq --arg GITHUB_Proview_URL "$GITHUB_Proview_URL" --arg GITHUB_SECRET "$GITHUB_SECRET" '
+                .connections.connection[] |= (
+                    if .field[].id == "url" then .field[].value = $GITHUB_Proview_URL else . end
+                ) | (
+                    if .field[].id == "password" then .field[].value = $GITHUB_SECRET else . end
+                )
+            ' "$found_file" > temp.json && mv temp.json "$found_file"
+            echo "Updated $found_file with new values."
+
+            # Display the contents of the file after the update
+            echo "Contents of $found_file after update:"
+            cat "$found_file"
+        else
+            echo "No or empty connections found in $found_file. Skipping update."
+        fi
+    else
+        echo "No connections object found in $found_file. Skipping update."
+    fi
+done
