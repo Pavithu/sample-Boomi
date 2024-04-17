@@ -70,3 +70,14 @@ No or empty connections found in /home/runner/work/aiid205223-sample-Boomi-CICD/
 
 parse error: Invalid numeric literal at line 1, column 4
 Error: Process completed with exit code 4.
+
+for i in $values; do
+           RESULT=$(echo $i | awk '{gsub(/\$|\{|\}/, ""); print}')
+           echo $RESULT 
+           echo "secrets.$RESULT"
+           val=$(echo  "secrets.$RESULT")
+           val='${{'$val'}}'
+           echo $val
+           
+          done
+          
