@@ -167,29 +167,17 @@ GITHUB_SECRET=$(cat path_to_GITHUB_SECRET_file)
 
 
 
-
-extract_values() {
-    local file="$1"
-    local values=()
-
-    while IFS= read -r line; do
-        # Extract values from each line
-        while [[ $line =~ \"([^"]*)\"[[:space:]]*:[[:space:]]*\"([^"]*)\" ]]; do
-            value="${BASH_REMATCH[2]}"
-            values+=("$value")
-            # Remove matched portion from the line
-            line=${line/${BASH_REMATCH[0]}}
-        done
-    done < "$file"
-
-    echo "${values[@]}"
-}
-
 # Path to the JSON file
 file_path="23423dfgd-57f4-47c8-b861-bf60ee85621c.json"
 
-# Call the function and store values in Decrypt_values array
-Decrypt_values=($(extract_values "$file_path"))
+# Initialize an empty array
+Decrypt_array=()
 
-# Display the decrypted values
-echo "Decrypted values: ${Decrypt_values[@]}"
+# Use jq to extract values and populate the array
+while IFS= read -r value; do
+    Decrypt_array+=("$value")
+done < <(jq -r 'recurse | strings' "$file_path" | grep '^\$')
+
+# Display the values in the Decrypt_array
+echo "Decrypted values:"
+printf '%s\n' "${Decrypt_array[@]}"
