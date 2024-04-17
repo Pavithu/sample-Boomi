@@ -178,3 +178,30 @@ echo "Decrypted values:"
 printf '%s\n' "${Decrypt_array[@]}"
 
 https://github.com/tr/aiid205223-sample-Boomi-CICD/settings/secrets/actions
+
+#!/bin/bash
+
+# Path to the JSON file
+file_path="your_file.json"
+
+# Define the values for GITHUB_Proview_URL and GITHUB_SECRET
+github_proview_url="your_proview_url_value"
+github_secret="your_secret_value"
+
+# Initialize an empty array
+Decrypt_array=()
+
+# Use jq to extract "value" fields and populate the array
+while IFS= read -r value; do
+    Decrypt_array+=("$value")
+done < <(jq -r '.. | .value? // empty' "$file_path")
+
+# Replace ${GITHUB_Proview_URL} and ${GITHUB_SECRET} with manually defined values
+json_content=$(jq --arg github_proview_url "$github_proview_url" --arg github_secret "$github_secret" '. | tostring | gsub("\\${GITHUB_Proview_URL}"; $github_proview_url) | gsub("\\${GITHUB_SECRET}"; $github_secret) | fromjson' "$file_path")
+
+# Update the JSON file with the modified content
+echo "$json_content" > "$file_path"
+
+echo "Values replaced in the JSON file."
+
+
