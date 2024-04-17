@@ -174,7 +174,7 @@ Decrypt_array=()
 # Use jq to extract all values and populate the array
 while IFS= read -r value; do
     Decrypt_array+=("$value")
-done < <(jq -r 'recurse | select(type == "string")' "$file_path")
+done < <(jq -r 'recurse(.[]?) | select(type != "object") | select(type != "array")' "$file_path")
 
 # Display the values in the Decrypt_array
 echo "Decrypted values:"
