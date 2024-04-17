@@ -164,3 +164,32 @@ Error: Process completed with exit code 5.
 
           GITHUB_Proview_URL=$(cat path_to_GITHUB_Proview_URL_file)
 GITHUB_SECRET=$(cat path_to_GITHUB_SECRET_file)
+
+
+
+
+extract_values() {
+    local file="$1"
+    local values=()
+
+    while IFS= read -r line; do
+        # Extract values from each line
+        while [[ $line =~ \"([^"]*)\"[[:space:]]*:[[:space:]]*\"([^"]*)\" ]]; do
+            value="${BASH_REMATCH[2]}"
+            values+=("$value")
+            # Remove matched portion from the line
+            line=${line/${BASH_REMATCH[0]}}
+        done
+    done < "$file"
+
+    echo "${values[@]}"
+}
+
+# Path to the JSON file
+file_path="23423dfgd-57f4-47c8-b861-bf60ee85621c.json"
+
+# Call the function and store values in Decrypt_values array
+Decrypt_values=($(extract_values "$file_path"))
+
+# Display the decrypted values
+echo "Decrypted values: ${Decrypt_values[@]}"
