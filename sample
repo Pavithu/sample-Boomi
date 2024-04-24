@@ -178,3 +178,15 @@ jobs:
               )
               ' "$found_file" > temp.json && mv temp.json "$found_file"
            done
+
+
+#!/bin/bash
+
+# Extracting values using jq
+url=$(jq -r '.connections.connection[0].field[] | select(.id == "url") | .value' json_file.json)
+password=$(jq -r '.connections.connection[0].field[] | select(.id == "password") | .value' json_file.json)
+property_value=$(jq -r '.properties.property[] | select(.name == "DPP_Sample") | .value' json_file.json)
+
+echo "URL: $url"
+echo "Password: $password"
+echo "Property Value: $property_value"
