@@ -87,3 +87,55 @@ for i in $values; do
 
 https://softwareupdate.vmware.com/cds/vmw-desktop/ws/17.5.2/23775571/windows/core/
 
+
+# This workflow will initiate a Veracode Static Analysis
+
+name: Veracode Static Analysis
+
+# Controls when the workflow will run
+on:
+
+  push:
+    branches: [ development ]
+
+  # Workflow is triggered at
+  #  first of every month
+  schedule:
+    - cron: '0 0 1 * *'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  #  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+      with:
+        repository: ''
+
+    - name: Zip files
+      run: |
+        zip -r veracode.zip *
+        mkdir zip && cp veracode.zip zip
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%d-%B-%Y')"
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: zip/*.zip
+    - uses: veracode/veracode-uploadandscan-action@master # Run the uploadandscan action. Inputs are described above.
+      with:
+        filepath: 'zip/'
+        vid: '${{ secrets.VERACODE_API_ID }}'
+        vkey: '${{ secrets.VERACODE_API_KEY }}'  
+        version: "Version ${{ steps.date.outputs.date }}"  
+        appname: "Tax&AccountingUK"
+        scanallnonfataltoplevelmodules: true
+        criticality: 'VeryHigh'
+        createprofile: false
