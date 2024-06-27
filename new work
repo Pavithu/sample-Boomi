@@ -221,3 +221,20 @@ jobs:
         uses: snyk/actions/php@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+*****************************
+
+
+   - name: Install Composer
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php --quiet
+          RESULT=$?
+          rm composer-setup.php
+          mv composer.phar /usr/local/bin/composer
+          chmod +x /usr/local/bin/composer
+          composer --version  # Verify Composer installation
+          exit $RESULT
+
+      - name: Install Composer Dependencies
+        run: composer install --no-progress --no-suggest --no-interaction
