@@ -256,9 +256,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install PHP and necessary packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y php-cli
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'  # Adjust PHP version as needed
+          extensions: mbstring, xml, zip  # Install required PHP extensions
 
       - name: Install Composer
         run: |
@@ -270,3 +271,4 @@ jobs:
           chmod +x /usr/local/bin/composer
           composer --version  # Verify Composer installation
           exit $RESULT
+
