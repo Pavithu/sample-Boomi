@@ -249,10 +249,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: '20'  # Specify Node.js version for the entire job
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}  # Use Node.js version specified in env
 
       - name: Install PHP and necessary packages
         run: |
@@ -270,5 +274,4 @@ jobs:
           composer --version  # Verify Composer installation
           exit $RESULT
 
-build
-Node.js 16 actions are deprecated. Please update the following actions to use Node.js 20: actions/checkout@v2. For more information see: https://github.blog/changelog/2023-09-22-github-actions-transitioning-from-node-16-to-node-20/.
+      # Add more steps as needed, such as running tests, deploying, etc.
